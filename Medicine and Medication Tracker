@@ -1,0 +1,189 @@
+import json
+from datetime import datetime
+
+DATA_FILE = "medicines.json"
+
+
+# Load medicines from JSON file
+def load_medicines():
+    try:
+        with open(DATA_FILE, "r") as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+# Save medicines to JSON file
+def save_medicines(medicines):
+    with open(DATA_FILE, "w") as file:
+        json.dump(medicines, file, indent=4)
+
+
+# Add a new medicine
+def add_medicine(medicines):
+    print("\n--- Add Medicine ---")
+
+    name = input("Enter medicine name: ")
+    dosage = input("Enter dosage (e.g., 500 mg): ")
+    time = input("Enter time to take (e.g., 08:00 PM): ")
+    start_date = input("Enter start date (DD-MM-YYYY): ")
+    end_date = input("Enter end date (DD-MM-YYYY): ")
+
+    medicine = {
+        "id": len(medicines) + 1,
+        "name": name,
+        "dosage": dosage,
+        "time": time,
+        "start_date": start_date,
+        "end_date": end_date,
+        "taken": False
+    }
+
+    medicines.append(medicine)
+    save_medicines(medicines)
+
+    print("\nMedicine added successfully!")
+
+
+# Display all medicines
+def view_medicines(medicines):
+    print("\n--- All Medicines ---")
+
+    if not medicines:
+        print("No medicines found.")
+        return
+
+    for medicine in medicines:
+        status = "Taken" if medicine["taken"] else "Not Taken"
+
+        print("\nID:", medicine["id"])
+        print("Medicine:", medicine["name"])
+        print("Dosage:", medicine["dosage"])
+        print("Time:", medicine["time"])
+        print("Start Date:", medicine["start_date"])
+        print("End Date:", medicine["end_date"])
+        print("Status:", status)
+
+
+# Search medicine
+def search_medicine(medicines):
+    print("\n--- Search Medicine ---")
+
+    search = input("Enter medicine name: ").lower()
+
+    found = False
+
+    for medicine in medicines:
+        if search in medicine["name"].lower():
+            print("\nMedicine:", medicine["name"])
+            print("Dosage:", medicine["dosage"])
+            print("Time:", medicine["time"])
+            print("Start Date:", medicine["start_date"])
+            print("End Date:", medicine["end_date"])
+
+            found = True
+
+    if not found:
+        print("Medicine not found.")
+
+
+# Mark medicine as taken
+def mark_taken(medicines):
+    print("\n--- Mark Medicine as Taken ---")
+
+    try:
+        medicine_id = int(input("Enter medicine ID: "))
+    except ValueError:
+        print("Please enter a valid ID.")
+        return
+
+    for medicine in medicines:
+        if medicine["id"] == medicine_id:
+            medicine["taken"] = True
+            save_medicines(medicines)
+
+            print(f"{medicine['name']} marked as taken.")
+            return
+
+    print("Medicine ID not found.")
+
+
+# Reset daily medicine status
+def reset_status(medicines):
+    for medicine in medicines:
+        medicine["taken"] = False
+
+    save_medicines(medicines)
+
+    print("\nMedicine status reset successfully.")
+
+
+# Delete medicine
+def delete_medicine(medicines):
+    print("\n--- Delete Medicine ---")
+
+    try:
+        medicine_id = int(input("Enter medicine ID: "))
+    except ValueError:
+        print("Please enter a valid ID.")
+        return
+
+    for medicine in medicines:
+        if medicine["id"] == medicine_id:
+            medicines.remove(medicine)
+            save_medicines(medicines)
+
+            print("Medicine deleted successfully.")
+            return
+
+    print("Medicine ID not found.")
+
+
+# Main menu
+def main():
+    medicines = load_medicines()
+
+    while True:
+        print("\n================================")
+        print("   MEDICINE & MEDICATION TRACKER")
+        print("================================")
+
+        print("1. Add Medicine")
+        print("2. View Medicines")
+        print("3. Search Medicine")
+        print("4. Mark Medicine as Taken")
+        print("5. Reset Daily Status")
+        print("6. Delete Medicine")
+        print("7. Exit")
+
+        choice = input("\nEnter your choice: ")
+
+        if choice == "1":
+            add_medicine(medicines)
+
+        elif choice == "2":
+            view_medicines(medicines)
+
+        elif choice == "3":
+            search_medicine(medicines)
+
+        elif choice == "4":
+            mark_taken(medicines)
+
+        elif choice == "5":
+            reset_status(medicines)
+
+        elif choice == "6":
+            delete_medicine(medicines)
+
+        elif choice == "7":
+            print("\nThank you for using Medicine Tracker!")
+            break
+
+        else:
+            print("\nInvalid choice. Please try again.")
+
+
+# Start the program
+if __name__ == "__main__":
+    main()
