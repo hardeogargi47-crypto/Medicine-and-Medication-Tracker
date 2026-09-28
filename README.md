@@ -60,6 +60,3 @@ Users can search for a particular medicine by entering its name. The application
 This feature demonstrates how Python can be used to search through data stored in lists and dictionaries.
 
 ### 4. Mark Medicine as Taken
-
-Aft
-# Medicine-and-Medication-Tracker
